@@ -11,6 +11,10 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Jetpack.h"
+#include "JetpackCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/InputComponent.h"
+#include "Engine/World.h"
 
 AJetpackCharacter::AJetpackCharacter()
 {

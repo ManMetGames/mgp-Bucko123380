@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "JetpackCharacter.generated.h"
 
+
 class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
@@ -32,6 +33,33 @@ class AJetpackCharacter : public ACharacter
 	UCameraComponent* FollowCamera;
 	
 protected:
+
+	// Is the jetpack On?
+    bool bIsJetpacking = false;
+
+    // Thrust applied by the jetpack
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jetpack")
+    float JetpackForce = 3000.0f;
+
+    // Max Fuel
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jetpack")
+    float MaxFuel = 100.0f;
+
+    // Current  fuel
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jetpack")
+    float CurrentFuel = 100.0f;
+
+    // Fuel Consumption 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jetpack")
+    float FuelBurnRate = 30.0f;
+
+    // Fuel Recharge
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jetpack")
+    float FuelRechargeRate = 15.0f;
+
+    // Input functions to start and stop the jetpack
+    void StartJetpack();
+    void StopJetpack();
 
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, Category="Input")
