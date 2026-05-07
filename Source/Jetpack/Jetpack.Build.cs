@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class JP : ModuleRules
+public class Jetpack : ModuleRules
 {
-	public JP(ReadOnlyTargetRules Target) : base(Target)
+	public Jetpack(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -24,20 +24,20 @@ public class JP : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
 		PublicIncludePaths.AddRange(new string[] {
-			"JP",
-			"JP/Variant_Platforming",
-			"JP/Variant_Platforming/Animation",
-			"JP/Variant_Combat",
-			"JP/Variant_Combat/AI",
-			"JP/Variant_Combat/Animation",
-			"JP/Variant_Combat/Gameplay",
-			"JP/Variant_Combat/Interfaces",
-			"JP/Variant_Combat/UI",
-			"JP/Variant_SideScrolling",
-			"JP/Variant_SideScrolling/AI",
-			"JP/Variant_SideScrolling/Gameplay",
-			"JP/Variant_SideScrolling/Interfaces",
-			"JP/Variant_SideScrolling/UI"
+			"Jetpack",
+			"Jetpack/Variant_Platforming",
+			"Jetpack/Variant_Platforming/Animation",
+			"Jetpack/Variant_Combat",
+			"Jetpack/Variant_Combat/AI",
+			"Jetpack/Variant_Combat/Animation",
+			"Jetpack/Variant_Combat/Gameplay",
+			"Jetpack/Variant_Combat/Interfaces",
+			"Jetpack/Variant_Combat/UI",
+			"Jetpack/Variant_SideScrolling",
+			"Jetpack/Variant_SideScrolling/AI",
+			"Jetpack/Variant_SideScrolling/Gameplay",
+			"Jetpack/Variant_SideScrolling/Interfaces",
+			"Jetpack/Variant_SideScrolling/UI"
 		});
 
 		// Uncomment if you are using Slate UI

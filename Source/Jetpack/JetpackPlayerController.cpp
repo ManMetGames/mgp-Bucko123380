@@ -1,19 +1,15 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 
-#include "SideScrollingPlayerController.h"
+#include "JetpackPlayerController.h"
 #include "EnhancedInputSubsystems.h"
-#include "InputMappingContext.h"
-#include "Kismet/GameplayStatics.h"
-#include "GameFramework/PlayerStart.h"
-#include "SideScrollingCharacter.h"
 #include "Engine/LocalPlayer.h"
-#include "Engine/World.h"
+#include "InputMappingContext.h"
 #include "Blueprint/UserWidget.h"
-#include "JP.h"
+#include "Jetpack.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 
-void ASideScrollingPlayerController::BeginPlay()
+void AJetpackPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -30,21 +26,21 @@ void ASideScrollingPlayerController::BeginPlay()
 
 		} else {
 
-			UE_LOG(LogJP, Error, TEXT("Could not spawn mobile controls widget."));
+			UE_LOG(LogJetpack, Error, TEXT("Could not spawn mobile controls widget."));
 
 		}
 
 	}
 }
 
-void ASideScrollingPlayerController::SetupInputComponent()
+void AJetpackPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
 	// only add IMCs for local player controllers
 	if (IsLocalPlayerController())
 	{
-		// add the input mapping context
+		// Add Input Mapping Contexts
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		{
 			for (UInputMappingContext* CurrentContext : DefaultMappingContexts)
@@ -64,34 +60,7 @@ void ASideScrollingPlayerController::SetupInputComponent()
 	}
 }
 
-void ASideScrollingPlayerController::OnPossess(APawn* InPawn)
-{
-	Super::OnPossess(InPawn);
-
-	// subscribe to the pawn's OnDestroyed delegate
-	InPawn->OnDestroyed.AddDynamic(this, &ASideScrollingPlayerController::OnPawnDestroyed);
-}
-
-void ASideScrollingPlayerController::OnPawnDestroyed(AActor* DestroyedActor)
-{
-	// find the player start
-	TArray<AActor*> ActorList;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), ActorList);
-
-	if (ActorList.Num() > 0)
-	{
-		// spawn a character at the player start
-		const FTransform SpawnTransform = ActorList[0]->GetActorTransform();
-
-		if (ASideScrollingCharacter* RespawnedCharacter = GetWorld()->SpawnActor<ASideScrollingCharacter>(CharacterClass, SpawnTransform))
-		{
-			// possess the character
-			Possess(RespawnedCharacter);
-		}
-	}
-}
-
-bool ASideScrollingPlayerController::ShouldUseTouchControls() const
+bool AJetpackPlayerController::ShouldUseTouchControls() const
 {
 	// are we on a mobile platform? Should we force touch?
 	return SVirtualJoystick::ShouldDisplayTouchInterface() || bForceTouchControls;

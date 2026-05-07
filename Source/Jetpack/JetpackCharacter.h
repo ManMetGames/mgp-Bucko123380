@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
-#include "JPCharacter.generated.h"
+#include "JetpackCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -19,7 +19,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  Implements a controllable orbiting camera
  */
 UCLASS(abstract)
-class AJPCharacter : public ACharacter
+class AJetpackCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -52,7 +52,7 @@ protected:
 public:
 
 	/** Constructor */
-	AJPCharacter();	
+	AJetpackCharacter();	
 
 protected:
 

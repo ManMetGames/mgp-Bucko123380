@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "JPCharacter.h"
+#include "JetpackCharacter.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -10,9 +10,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
-#include "JP.h"
+#include "Jetpack.h"
 
-AJPCharacter::AJPCharacter()
+AJetpackCharacter::AJetpackCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -50,7 +50,7 @@ AJPCharacter::AJPCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
-void AJPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AJetpackCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
@@ -60,19 +60,19 @@ void AJPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AJPCharacter::Move);
-		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &AJPCharacter::Look);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AJetpackCharacter::Move);
+		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &AJetpackCharacter::Look);
 
 		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AJPCharacter::Look);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AJetpackCharacter::Look);
 	}
 	else
 	{
-		UE_LOG(LogJP, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+		UE_LOG(LogJetpack, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
 
-void AJPCharacter::Move(const FInputActionValue& Value)
+void AJetpackCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
@@ -81,7 +81,7 @@ void AJPCharacter::Move(const FInputActionValue& Value)
 	DoMove(MovementVector.X, MovementVector.Y);
 }
 
-void AJPCharacter::Look(const FInputActionValue& Value)
+void AJetpackCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
@@ -90,7 +90,7 @@ void AJPCharacter::Look(const FInputActionValue& Value)
 	DoLook(LookAxisVector.X, LookAxisVector.Y);
 }
 
-void AJPCharacter::DoMove(float Right, float Forward)
+void AJetpackCharacter::DoMove(float Right, float Forward)
 {
 	if (GetController() != nullptr)
 	{
@@ -110,7 +110,7 @@ void AJPCharacter::DoMove(float Right, float Forward)
 	}
 }
 
-void AJPCharacter::DoLook(float Yaw, float Pitch)
+void AJetpackCharacter::DoLook(float Yaw, float Pitch)
 {
 	if (GetController() != nullptr)
 	{
@@ -120,13 +120,13 @@ void AJPCharacter::DoLook(float Yaw, float Pitch)
 	}
 }
 
-void AJPCharacter::DoJumpStart()
+void AJetpackCharacter::DoJumpStart()
 {
 	// signal the character to jump
 	Jump();
 }
 
-void AJPCharacter::DoJumpEnd()
+void AJetpackCharacter::DoJumpEnd()
 {
 	// signal the character to stop jumping
 	StopJumping();

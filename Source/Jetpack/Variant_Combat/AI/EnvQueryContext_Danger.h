@@ -11,7 +11,7 @@
  *  Returns the enemy character's last known danger location
  */
 UCLASS()
-class JP_API UEnvQueryContext_Danger : public UEnvQueryContext
+class JETPACK_API UEnvQueryContext_Danger : public UEnvQueryContext
 {
 	GENERATED_BODY()
 	

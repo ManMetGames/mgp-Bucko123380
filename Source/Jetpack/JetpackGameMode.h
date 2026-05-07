@@ -4,20 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "JPGameMode.generated.h"
+#include "JetpackGameMode.generated.h"
 
 /**
  *  Simple GameMode for a third person game
  */
 UCLASS(abstract)
-class AJPGameMode : public AGameModeBase
+class AJetpackGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
 	
 	/** Constructor */
-	AJPGameMode();
+	AJetpackGameMode();
 };
 
 

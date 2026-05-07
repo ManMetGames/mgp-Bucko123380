@@ -1,8 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "JPGameMode.h"
+#include "JetpackGameMode.h"
 
-AJPGameMode::AJPGameMode()
+AJetpackGameMode::AJetpackGameMode()
 {
 	// stub
 }

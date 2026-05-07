@@ -1,15 +1,19 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 
-#include "JPPlayerController.h"
+#include "Variant_Platforming/PlatformingPlayerController.h"
 #include "EnhancedInputSubsystems.h"
-#include "Engine/LocalPlayer.h"
 #include "InputMappingContext.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerStart.h"
+#include "PlatformingCharacter.h"
+#include "Engine/LocalPlayer.h"
+#include "Engine/World.h"
 #include "Blueprint/UserWidget.h"
-#include "JP.h"
+#include "Jetpack.h"
 #include "Widgets/Input/SVirtualJoystick.h"
 
-void AJPPlayerController::BeginPlay()
+void APlatformingPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -26,21 +30,21 @@ void AJPPlayerController::BeginPlay()
 
 		} else {
 
-			UE_LOG(LogJP, Error, TEXT("Could not spawn mobile controls widget."));
+			UE_LOG(LogJetpack, Error, TEXT("Could not spawn mobile controls widget."));
 
 		}
 
 	}
 }
 
-void AJPPlayerController::SetupInputComponent()
+void APlatformingPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
 	// only add IMCs for local player controllers
 	if (IsLocalPlayerController())
 	{
-		// Add Input Mapping Contexts
+		// add the input mapping context
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		{
 			for (UInputMappingContext* CurrentContext : DefaultMappingContexts)
@@ -60,7 +64,34 @@ void AJPPlayerController::SetupInputComponent()
 	}
 }
 
-bool AJPPlayerController::ShouldUseTouchControls() const
+void APlatformingPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	// subscribe to the pawn's OnDestroyed delegate
+	InPawn->OnDestroyed.AddDynamic(this, &APlatformingPlayerController::OnPawnDestroyed);
+}
+
+void APlatformingPlayerController::OnPawnDestroyed(AActor* DestroyedActor)
+{
+	// find the player start
+	TArray<AActor*> ActorList;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), ActorList);
+
+	if (ActorList.Num() > 0)
+	{
+		// spawn a character at the player start
+		const FTransform SpawnTransform = ActorList[0]->GetActorTransform();
+
+		if (APlatformingCharacter* RespawnedCharacter = GetWorld()->SpawnActor<APlatformingCharacter>(CharacterClass, SpawnTransform))
+		{
+			// possess the character
+			Possess(RespawnedCharacter);
+		}
+	}
+}
+
+bool APlatformingPlayerController::ShouldUseTouchControls() const
 {
 	// are we on a mobile platform? Should we force touch?
 	return SVirtualJoystick::ShouldDisplayTouchInterface() || bForceTouchControls;

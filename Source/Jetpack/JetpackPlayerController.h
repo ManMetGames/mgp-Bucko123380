@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "JPPlayerController.generated.h"
+#include "JetpackPlayerController.generated.h"
 
 class UInputMappingContext;
 class UUserWidget;
@@ -14,7 +14,7 @@ class UUserWidget;
  *  Manages input mappings
  */
 UCLASS(abstract)
-class AJPPlayerController : public APlayerController
+class AJetpackPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
