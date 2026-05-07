@@ -39,11 +39,11 @@ protected:
 
     // Thrust applied by the jetpack
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jetpack")
-    float JetpackForce = 3000.0f;
+    float JetpackForce = 100000.0f;
 
     // Max Fuel
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jetpack")
-    float MaxFuel = 100.0f;
+    float MaxFuel = 1000.0f;
 
     // Current  fuel
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jetpack")
@@ -61,6 +61,9 @@ protected:
     void StartJetpack();
     void StopJetpack();
 
+	virtual void Tick(float DeltaTime) override;
+	void HandleJetpack(float DeltaTime);
+
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* JumpAction;
@@ -76,6 +79,8 @@ protected:
 	/** Mouse Look Input Action */
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* MouseLookAction;
+
+	UPROPERTY(EditAnywhere, Category="Input")	UInputAction* JetpackAction;
 
 public:
 
