@@ -1,4 +1,3 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -7,7 +6,7 @@
 #include "Logging/LogMacros.h"
 #include "JetpackCharacter.generated.h"
 
-
+class UNiagaraComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
@@ -24,62 +23,56 @@ class AJetpackCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	/** Camera boom positioning the camera behind the character */
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
 
-	/** Follow camera */
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
 	
 protected:
+    //jetpack FUnctions and variables and particlesystem
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
+		UNiagaraComponent* LeftThrusterFX;
 
-	// Is the jetpack On?
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
+		UNiagaraComponent* RightThrusterFX;
+
     bool bIsJetpacking = false;
 
-    // Thrust applied by the jetpack
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jetpack")
     float JetpackForce = 100000.0f;
 
-    // Max Fuel
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jetpack")
     float MaxFuel = 1000.0f;
 
-    // Current  fuel
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jetpack")
-    float CurrentFuel = 100.0f;
+    float CurrentFuel = 1000.0f;
 
-    // Fuel Consumption 
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jetpack")
     float FuelBurnRate = 30.0f;
 
-    // Fuel Recharge
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jetpack")
-    float FuelRechargeRate = 15.0f;
+    float RechargeRate = 15.0f;
 
-    // Input functions to start and stop the jetpack
     void StartJetpack();
     void StopJetpack();
 
 	virtual void Tick(float DeltaTime) override;
 	void HandleJetpack(float DeltaTime);
 
-	/** Jump Input Action */
+
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* JumpAction;
-
-	/** Move Input Action */
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* MoveAction;
-
-	/** Look Input Action */
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* LookAction;
-
-	/** Mouse Look Input Action */
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* MouseLookAction;
-
 	UPROPERTY(EditAnywhere, Category="Input")	UInputAction* JetpackAction;
 
 public:
@@ -89,41 +82,31 @@ public:
 
 protected:
 
-	/** Initialize input action bindings */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
 
-	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
-
-	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
 public:
 
-	/** Handles move inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoMove(float Right, float Forward);
 
-	/** Handles look inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoLook(float Yaw, float Pitch);
 
-	/** Handles jump pressed inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpStart();
 
-	/** Handles jump pressed inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
 
 public:
 
-	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
-	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 };
 

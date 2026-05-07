@@ -12,10 +12,19 @@
 #include "InputActionValue.h"
 #include "Jetpack.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "NiagaraComponent.h"
 
 
 AJetpackCharacter::AJetpackCharacter()
 {
+	LeftThrusterFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("LeftThrusterFX"));
+	LeftThrusterFX->SetupAttachment(RootComponent);
+	LeftThrusterFX->SetAutoActivate(false);
+
+	RightThrusterFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("RightThrusterFX"));
+	RightThrusterFX->SetupAttachment(RootComponent);
+	RightThrusterFX->SetAutoActivate(false);
+
 	PrimaryActorTick.bCanEverTick = true;
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -145,13 +154,18 @@ void AJetpackCharacter::DoJumpEnd()
 void AJetpackCharacter::StartJetpack()
 {
     bIsJetpacking = true;
-    GetCharacterMovement()->SetMovementMode(MOVE_Flying); // switch to flying mode for jetpacking
+    GetCharacterMovement()->SetMovementMode(MOVE_Flying); 
+	if (LeftThrusterFX) LeftThrusterFX->Activate(true);
+    if (RightThrusterFX) RightThrusterFX->Activate(true);
+
 }
 
 void AJetpackCharacter::StopJetpack()
 {
 	bIsJetpacking = false;
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling); // Switch back to falling mode when jetpacking stops
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling); 
+	if (LeftThrusterFX) LeftThrusterFX->Deactivate();
+    if (RightThrusterFX) RightThrusterFX->Deactivate();
 }
 
 void AJetpackCharacter::HandleJetpack(float DeltaTime)
@@ -181,7 +195,7 @@ void AJetpackCharacter::HandleJetpack(float DeltaTime)
 		// Recharge when idle
 		if (CurrentFuel < MaxFuel) //recharge only if fuel is not full
 		{
-			CurrentFuel = FMath::Min(CurrentFuel + FuelRechargeRate * DeltaTime, MaxFuel);
+			CurrentFuel = FMath::Min(CurrentFuel + RechargeRate * DeltaTime, MaxFuel);
 		}
 	}
 }
