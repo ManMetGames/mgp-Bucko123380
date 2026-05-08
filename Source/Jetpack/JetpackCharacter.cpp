@@ -73,13 +73,6 @@ void AJetpackCharacter::BeginPlay()
 	
 
 
-
-
-
-
-
-
-
 void AJetpackCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
@@ -167,22 +160,22 @@ void AJetpackCharacter::DoJumpEnd()
 }
 
 
-
-
+// Jetpack functions
+//calls when the player starts jetpacking, sets the movement mode to flying and triggers the jetpack started event for blueprints
 void AJetpackCharacter::StartJetpack()
 {
     bIsJetpacking = true;
     GetCharacterMovement()->SetMovementMode(MOVE_Flying);
     JetpackStarted();
 }
-
+//stops the jetpack, sets the movement mode back to falling and triggers the jetpack stopped event for blueprints
 void AJetpackCharacter::StopJetpack()
 {
     bIsJetpacking = false;
     GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
     JetpackStopped();
 }
-
+//handles the jetpack logic, applying force when jetpacking and managing fuel burn and recharge
 void AJetpackCharacter::HandleJetpack(float DeltaTime)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Fuel: %f, IsJetpacking: %d"), CurrentFuel, bIsJetpacking);
@@ -190,13 +183,13 @@ void AJetpackCharacter::HandleJetpack(float DeltaTime)
 
     if (bIsJetpacking && CurrentFuel > 0)
     {
-        FVector JetpackThrust = FVector::UpVector * JetpackForce;
+        FVector JetpackThrust = FVector::UpVector * JetpackForce; // Apply upward force for jetpack thrust 
         GetCharacterMovement()->AddForce(JetpackThrust);
         CurrentFuel -= FuelBurnRate * DeltaTime;
         if (CurrentFuel <= 0)
         {
             CurrentFuel = 0;
-            StopJetpack();
+            StopJetpack(); // Automatically stop jetpacking when fuel runs out
         }
     }
     else if (!bIsJetpacking && CurrentFuel < MaxFuel)
@@ -204,12 +197,12 @@ void AJetpackCharacter::HandleJetpack(float DeltaTime)
         RechargeTimer += DeltaTime;
         if (RechargeTimer >= RechargeDelay)
         {
-            CurrentFuel = FMath::Min(CurrentFuel + RechargeRate * DeltaTime, MaxFuel);
+            CurrentFuel = FMath::Min(CurrentFuel + RechargeRate * DeltaTime, MaxFuel); // Recharge fuel over time after a delay of not jetpacking
         }
     }
 }
-
-void AJetpackCharacter::Tick(float DeltaTime)
+////override the tick function to call our jetpack handling logic every frame
+void AJetpackCharacter::Tick(float DeltaTime) 
 {
 	Super::Tick(DeltaTime);
 	HandleJetpack(DeltaTime);
