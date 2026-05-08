@@ -13,17 +13,13 @@
 #include "Jetpack.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NiagaraComponent.h"
+#include "Blueprint/UserWidget.h"
 
 
 AJetpackCharacter::AJetpackCharacter()
 {
-	LeftThrusterFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("LeftThrusterFX"));
-	LeftThrusterFX->SetupAttachment(RootComponent);
-	LeftThrusterFX->SetAutoActivate(false);
-
-	RightThrusterFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("RightThrusterFX"));
-	RightThrusterFX->SetupAttachment(RootComponent);
-	RightThrusterFX->SetAutoActivate(false);
+	
+	
 
 	PrimaryActorTick.bCanEverTick = true;
 	// Set size for collision capsule
@@ -58,9 +54,31 @@ AJetpackCharacter::AJetpackCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
+
+void AJetpackCharacter::BeginPlay()
+{
+    UE_LOG(LogTemp, Warning, TEXT("JetpackCharacter BeginPlay called"));
+    Super::BeginPlay();
+    if (JetpackHUDClass)
+    {
+        JetpackHUD = CreateWidget<UUserWidget>(GetWorld(), JetpackHUDClass);
+        if (JetpackHUD)
+        {
+            JetpackHUD->AddToViewport();
+        }
+    }
+}
+
+	
+
+
+
+
+
+
+
+
 
 void AJetpackCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -154,50 +172,41 @@ void AJetpackCharacter::DoJumpEnd()
 void AJetpackCharacter::StartJetpack()
 {
     bIsJetpacking = true;
-    GetCharacterMovement()->SetMovementMode(MOVE_Flying); 
-	if (LeftThrusterFX) LeftThrusterFX->Activate(true);
-    if (RightThrusterFX) RightThrusterFX->Activate(true);
-
+    GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+    JetpackStarted();
 }
 
 void AJetpackCharacter::StopJetpack()
 {
-	bIsJetpacking = false;
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling); 
-	if (LeftThrusterFX) LeftThrusterFX->Deactivate();
-    if (RightThrusterFX) RightThrusterFX->Deactivate();
+    bIsJetpacking = false;
+    GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
+    JetpackStopped();
 }
 
 void AJetpackCharacter::HandleJetpack(float DeltaTime)
 {
-	if (bIsJetpacking)
-	{
-		if (CurrentFuel > 0)
-		{
-			// Apply upward force
-			FVector JetpackThrust = FVector::UpVector * JetpackForce;
-			GetCharacterMovement()->AddForce(JetpackThrust);
-			// Consume fuel
-			CurrentFuel -= FuelBurnRate * DeltaTime;
-			if (CurrentFuel < 0.0f)
-			{
-				CurrentFuel = 0.0f;
-				StopJetpack(); //if fuel reachs 0, stop jetpacking
-			}
-		}
-		else
-		{
-			StopJetpack();
-		}
-	}
-	else
-	{
-		// Recharge when idle
-		if (CurrentFuel < MaxFuel) //recharge only if fuel is not full
-		{
-			CurrentFuel = FMath::Min(CurrentFuel + RechargeRate * DeltaTime, MaxFuel);
-		}
-	}
+	UE_LOG(LogTemp, Warning, TEXT("Fuel: %f, IsJetpacking: %d"), CurrentFuel, bIsJetpacking);
+
+
+    if (bIsJetpacking && CurrentFuel > 0)
+    {
+        FVector JetpackThrust = FVector::UpVector * JetpackForce;
+        GetCharacterMovement()->AddForce(JetpackThrust);
+        CurrentFuel -= FuelBurnRate * DeltaTime;
+        if (CurrentFuel <= 0)
+        {
+            CurrentFuel = 0;
+            StopJetpack();
+        }
+    }
+    else if (!bIsJetpacking && CurrentFuel < MaxFuel)
+    {
+        RechargeTimer += DeltaTime;
+        if (RechargeTimer >= RechargeDelay)
+        {
+            CurrentFuel = FMath::Min(CurrentFuel + RechargeRate * DeltaTime, MaxFuel);
+        }
+    }
 }
 
 void AJetpackCharacter::Tick(float DeltaTime)

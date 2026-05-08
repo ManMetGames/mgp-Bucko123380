@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
 struct FInputActionValue;
+class UUserWidget;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -32,37 +33,50 @@ class AJetpackCharacter : public ACharacter
 	UCameraComponent* FollowCamera;
 	
 protected:
-    //jetpack FUnctions and variables and particlesystem
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
-		UNiagaraComponent* LeftThrusterFX;
+virtual void BeginPlay() override;
+virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess="true"))
-		UNiagaraComponent* RightThrusterFX;
 
-    bool bIsJetpacking = false;
+protected:
+    // particle systems and widget
+
+	// widget for jetpack fuel
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+		TSubclassOf<UUserWidget> JetpackHUDClass;
+
+	UPROPERTY() UUserWidget* JetpackHUD;
+
+
+
+
+protected:
+	// jetpack variables and functions 
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jetpack")
     float JetpackForce = 100000.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jetpack")
-    float MaxFuel = 1000.0f;
+    float MaxFuel = 50.0f;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Jetpack")
-    float CurrentFuel = 1000.0f;
+    float CurrentFuel = 50.0f;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Jetpack", meta=(AllowPrivateAccess="true"))
+	bool bIsJetpacking = false;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jetpack")
-    float FuelBurnRate = 30.0f;
-
+    float FuelBurnRate = 10.0f;
+//recharge variables
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Jetpack")
-    float RechargeRate = 15.0f;
+    float RechargeRate = 5.0f;
+	float RechargeTimer = 0.0f;
+	float RechargeDelay = 2.0f;
 
     void StartJetpack();
     void StopJetpack();
-
-	virtual void Tick(float DeltaTime) override;
 	void HandleJetpack(float DeltaTime);
+
+
 
 
 	UPROPERTY(EditAnywhere, Category="Input")
@@ -104,6 +118,11 @@ public:
 	virtual void DoJumpEnd();
 
 public:
+	UFUNCTION(BlueprintImplementableEvent, Category="Jetpack")
+	void JetpackStarted();
+
+	UFUNCTION(BlueprintImplementableEvent, Category="Jetpack")
+	void JetpackStopped();
 
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
